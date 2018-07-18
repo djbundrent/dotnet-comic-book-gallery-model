@@ -165,7 +165,29 @@ namespace ComicBookLibraryManager.Data
         /// <param name="comicBook">The ComicBook entity instance to update.</param>
         public static void UpdateComicBook(ComicBook comicBook)
         {
-            // TODO
+            using (Context context = GetContext())
+            {
+                ComicBook comicBookToUpdate = context.ComicBooks.Find(comicBook.Id);
+
+                // Manual retreival and update
+                //comicBookToUpdate.SeriesId = comicBook.SeriesId;
+                //comicBookToUpdate.IssueNumber = comicBook.IssueNumber;
+                //comicBookToUpdate.Description = comicBook.Description;
+                //comicBookToUpdate.PublishedOn = comicBook.PublishedOn;
+                //comicBookToUpdate.AverageRating = comicBook.AverageRating;
+
+                // Update using Entry model but still requires 2 queries
+                //context.Entry(comicBookToUpdate).CurrentValues.SetValues(comicBook);
+
+                // Update by Attaching Entity to the context requires only 1 query
+                context.ComicBooks.Attach(comicBook);
+                var comicBookEntry = context.Entry(comicBook);
+                comicBookEntry.State = EntityState.Modified;
+
+                context.SaveChanges();
+
+               
+            }
         }
 
         /// <summary>
